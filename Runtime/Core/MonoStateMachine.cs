@@ -4,27 +4,27 @@ using UnityEngine;
 
 namespace WhiteArrow
 {
-    public abstract class MonoStateMachine<TStateEnum> : MonoBehaviour
-        where TStateEnum : Enum
+    public abstract class MonoStateMachine<TStateKey> : MonoBehaviour
+        where TStateKey : Enum
     {
-        public StateMachine<TStateEnum> Core { get; private set; }
+        protected StateMachine<TStateKey> _stateMachine { get; private set; }
 
 
 
         protected void InitStateMachine(
-            Dictionary<TStateEnum, State> stateMap,
-            Dictionary<TStateEnum, List<StateTransition<TStateEnum>>> transitionsMap,
-            TStateEnum initialStateId)
+            Dictionary<TStateKey, State> stateMap,
+            Dictionary<TStateKey, List<StateTransition<TStateKey>>> transitionsMap,
+            TStateKey initialStateId)
         {
-            Core = new(stateMap, transitionsMap, initialStateId);
-            Core.StateChanged += OnStateChanged;
+            _stateMachine = new(stateMap, transitionsMap, initialStateId);
+            _stateMachine.StateChanged += OnStateChanged;
         }
 
 
 
         private void Update()
         {
-            Core?.OnUpdate();
+            _stateMachine?.OnUpdate();
             OnUpdateCore();
         }
 
@@ -34,7 +34,7 @@ namespace WhiteArrow
 
         private void FixedUpdate()
         {
-            Core?.OnFixedUpdate();
+            _stateMachine?.OnFixedUpdate();
             OnFixedUpdateCore();
         }
 
@@ -42,14 +42,14 @@ namespace WhiteArrow
 
 
 
-        protected virtual void OnStateChanged(TStateEnum id) { }
+        protected virtual void OnStateChanged(TStateKey id) { }
 
 
 
-        protected T GetState<T>(TStateEnum id)
+        protected T GetState<T>(TStateKey id)
             where T : State
         {
-            return Core.GetState<T>(id);
+            return _stateMachine.GetState<T>(id);
         }
     }
 }

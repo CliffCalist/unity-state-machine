@@ -3,37 +3,37 @@ using System.Collections.Generic;
 
 namespace WhiteArrow
 {
-    public abstract class NestedStateMachine<TStateEnum> : State
-        where TStateEnum : Enum
+    public abstract class NestedStateMachine<TStateKey> : State
+        where TStateKey : Enum
     {
-        private StateMachine<TStateEnum> _core;
+        private StateMachine<TStateKey> _stateMachine;
 
 
 
         protected void Init(
-            Dictionary<TStateEnum, State> stateMap,
-            Dictionary<TStateEnum, List<StateTransition<TStateEnum>>> transitionsMap,
-            TStateEnum initialStateId)
+            Dictionary<TStateKey, State> stateMap,
+            Dictionary<TStateKey, List<StateTransition<TStateKey>>> transitionsMap,
+            TStateKey initialStateId)
         {
-            _core = new(stateMap, transitionsMap, initialStateId);
-            _core.StateChanged += OnStateChanged;
+            _stateMachine = new(stateMap, transitionsMap, initialStateId);
+            _stateMachine.StateChanged += OnStateChanged;
         }
 
 
 
-        internal protected override void OnUpdate() => _core.OnUpdate();
-        internal protected override void OnFixedUpdate() => _core.OnFixedUpdate();
+        internal protected override void OnUpdate() => _stateMachine.OnUpdate();
+        internal protected override void OnFixedUpdate() => _stateMachine.OnFixedUpdate();
 
 
 
-        protected virtual void OnStateChanged(TStateEnum id) { }
+        protected virtual void OnStateChanged(TStateKey key) { }
 
 
 
-        protected T GetState<T>(TStateEnum id)
+        protected T GetState<T>(TStateKey key)
             where T : State
         {
-            return _core.GetState<T>(id);
+            return _stateMachine.GetState<T>(key);
         }
     }
 }

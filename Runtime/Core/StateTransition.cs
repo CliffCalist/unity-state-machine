@@ -6,14 +6,14 @@ namespace WhiteArrow
         where TStateEnum : Enum
     {
         public TStateEnum To { get; }
-        public Func<bool> CanChangeToThis { get; }
+        public Func<bool> Condition { get; }
 
 
 
-        public StateTransition(TStateEnum to, Func<bool> canChangeToThis)
+        public StateTransition(TStateEnum to, Func<bool> condition)
         {
             To = to;
-            CanChangeToThis = canChangeToThis ?? throw new ArgumentNullException(nameof(canChangeToThis));
+            Condition = condition ?? throw new ArgumentNullException(nameof(condition));
         }
     }
 }

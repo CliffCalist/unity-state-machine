@@ -97,14 +97,14 @@ var sm = new StateMachine<PlayerState>(states, transitions, PlayerState.Idle);
 ## Advanced Usage
 
 ### Extending StateMachine<TStateEnum>
-You can inherit from `StateMachine<TStateEnum>` to customize behavior.  
+You can inherit from `StateMachine<TStateKey>` to customize behavior.  
 The base class allows you to override:
 - `OnUpdateCore()` — logic executed every frame.
 - `OnFixedUpdateCore()` — logic executed in the physics loop.
 - `OnStateChanged()` — called whenever the active state changes.
 
 You also have access to:
-- `GetState<T>(TStateEnum id)` — retrieve a specific state instance by ID.
+- `GetState<T>(TStateKey key)` — retrieve a specific state instance by key.
 
 ### NestedStateMachine<TStateEnum>
 This is a `State` that also acts as a facade for a separate `StateMachine<TStateEnum>`.  
@@ -120,7 +120,7 @@ InitStateMachine(
     TStateEnum initialStateId
 );
 ```
-Access the core machine through the `Core` property.  
+Access the core machine through the `_stateMachine` property.  
 You can override `OnUpdateCore`, `OnFixedUpdateCore`, and `OnStateChanged` just like in `StateMachine<T>`.  
 It also provides `GetState<T>(TStateEnum id)` to easily fetch and interact with specific states.
 

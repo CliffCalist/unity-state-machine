@@ -2,13 +2,13 @@ namespace WhiteArrow
 {
     public abstract class State
     {
-        protected bool _isEnabled { get; private set; }
+        public bool IsEnabled { get; private set; }
 
 
 
         internal void Enter()
         {
-            _isEnabled = true;
+            IsEnabled = true;
             EnterCore();
         }
 
@@ -18,7 +18,7 @@ namespace WhiteArrow
 
         internal void Exit()
         {
-            _isEnabled = false;
+            IsEnabled = false;
             ExitCore();
         }
 

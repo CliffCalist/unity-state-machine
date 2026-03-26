@@ -4,15 +4,15 @@ using UnityEngine;
 namespace WhiteArrow
 {
     [Serializable]
-    public class StateTriggerPair<TState>
-        where TState : Enum
+    public class StateTriggerPair<TStateKey>
+        where TStateKey : Enum
     {
-        [SerializeField] private TState _state;
+        [SerializeField] private TStateKey _state;
         [SerializeField] private string _animationTrigger;
 
 
 
-        public TState State => _state;
+        public TStateKey State => _state;
         public string AnimationTrigger => _animationTrigger;
     }
 }

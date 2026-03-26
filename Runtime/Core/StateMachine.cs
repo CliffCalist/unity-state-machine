@@ -3,27 +3,25 @@ using System.Collections.Generic;
 
 namespace WhiteArrow
 {
-    public class StateMachine<TStateEnum>
-         where TStateEnum : Enum
+    public class StateMachine<TStateKey>
+         where TStateKey : Enum
     {
-        private Dictionary<TStateEnum, State> _stateMap;
-        private Dictionary<TStateEnum, List<StateTransition<TStateEnum>>> _transitionsMap;
+        private readonly Dictionary<TStateKey, State> _stateMap;
+        private readonly Dictionary<TStateKey, List<StateTransition<TStateKey>>> _transitionsMap;
 
         private State _currentState;
-        public TStateEnum CurrentStateId { get; private set; }
+        public TStateKey CurrentStateKey { get; private set; }
 
 
-        public bool IsSettingsSeted => _stateMap != null && _transitionsMap != null;
 
-
-        public event Action<TStateEnum> StateChanged;
+        public event Action<TStateKey> StateChanged;
 
 
 
         public StateMachine(
-            Dictionary<TStateEnum, State> stateMap,
-            Dictionary<TStateEnum, List<StateTransition<TStateEnum>>> transitionsMap,
-            TStateEnum initialStateId)
+            Dictionary<TStateKey, State> stateMap,
+            Dictionary<TStateKey, List<StateTransition<TStateKey>>> transitionsMap,
+            TStateKey initialStateId)
         {
             _stateMap = stateMap ?? throw new ArgumentNullException(nameof(stateMap));
             _transitionsMap = transitionsMap ?? throw new ArgumentNullException(nameof(transitionsMap));
@@ -31,27 +29,24 @@ namespace WhiteArrow
             if (!stateMap.ContainsKey(initialStateId))
                 throw new ArgumentException($"Initial state '{initialStateId}' is not defined in the state map.");
 
-            CurrentStateId = initialStateId;
+            CurrentStateKey = initialStateId;
             _currentState = _stateMap[initialStateId];
             _currentState.Enter();
-            StateChanged?.Invoke(CurrentStateId);
+            StateChanged?.Invoke(CurrentStateKey);
         }
 
 
 
         public void OnUpdate()
         {
-            if (!IsSettingsSeted)
-                return;
-
             foreach (var state in _stateMap.Values)
                 state.OnUpdate();
 
-            if (_transitionsMap.TryGetValue(CurrentStateId, out var possibleTransitions))
+            if (_transitionsMap.TryGetValue(CurrentStateKey, out var possibleTransitions))
             {
                 foreach (var transition in possibleTransitions)
                 {
-                    if (transition.CanChangeToThis())
+                    if (transition.Condition())
                     {
                         ChangeState(transition.To);
                         break;
@@ -78,27 +73,27 @@ namespace WhiteArrow
 
 
 
-        private void ChangeState(TStateEnum id)
+        private void ChangeState(TStateKey key)
         {
             _currentState.Exit();
 
-            _currentState = _stateMap[id];
-            CurrentStateId = id;
+            _currentState = _stateMap[key];
+            CurrentStateKey = key;
 
             _currentState.Enter();
 
-            OnStateChanged(id);
-            StateChanged?.Invoke(CurrentStateId);
+            OnStateChanged(key);
+            StateChanged?.Invoke(CurrentStateKey);
         }
 
-        protected virtual void OnStateChanged(TStateEnum id) { }
+        protected virtual void OnStateChanged(TStateKey key) { }
 
 
 
-        internal protected T GetState<T>(TStateEnum id)
+        internal protected T GetState<T>(TStateKey key)
             where T : State
         {
-            return _stateMap[id] as T;
+            return _stateMap[key] as T;
         }
     }
 }
