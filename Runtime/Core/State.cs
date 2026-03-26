@@ -1,3 +1,5 @@
+using System;
+
 namespace WhiteArrow
 {
     public abstract class State
@@ -28,5 +30,13 @@ namespace WhiteArrow
 
         internal protected virtual void OnUpdate() { }
         internal protected virtual void OnFixedUpdate() { }
+
+
+
+        protected void ThrowIfDisabled()
+        {
+            if (!IsEnabled)
+                throw new InvalidOperationException("State is disabled.");
+        }
     }
 }
