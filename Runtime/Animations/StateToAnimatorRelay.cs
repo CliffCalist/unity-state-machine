@@ -17,6 +17,14 @@ namespace WhiteArrow
 
 
 
+        public StateToAnimatorRelay(Animator animator, List<StateTriggerPair<TStateKey>> animationTriggers)
+        {
+            _animator = animator ?? throw new ArgumentNullException(nameof(animator));
+            _animationTriggers = new(animationTriggers ?? throw new ArgumentNullException(nameof(animationTriggers)));
+        }
+
+
+
         public void Init(StateMachine<TStateKey> stateMachine)
         {
             _stateMachine = stateMachine ?? throw new ArgumentNullException(nameof(stateMachine));
