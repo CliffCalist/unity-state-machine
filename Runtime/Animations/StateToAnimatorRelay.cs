@@ -28,6 +28,7 @@ namespace WhiteArrow
         public void Init(StateMachine<TStateKey> stateMachine)
         {
             _stateMachine = stateMachine ?? throw new ArgumentNullException(nameof(stateMachine));
+            OnStateChanged(stateMachine.CurrentStateKey);
             _stateMachine.StateChanged += OnStateChanged;
         }
 
