@@ -14,6 +14,7 @@ namespace WhiteArrow
 
 
         private StateMachine<TStateKey> _stateMachine;
+        private TStateKey _lastState;
 
 
 
@@ -32,13 +33,20 @@ namespace WhiteArrow
             _stateMachine.StateChanged += OnStateChanged;
         }
 
-        private void OnStateChanged(TStateKey state)
+        private void OnStateChanged(TStateKey currentState)
         {
-            var pair = _animationTriggers.Find(p => p.State.Equals(state));
-            if (pair == null)
-                return;
+            if (_lastState != null)
+            {
+                var currentPair = _animationTriggers.Find(p => p.State.Equals(_lastState));
+                if (currentPair != null)
+                    _animator.ResetTrigger(currentPair.AnimationTrigger);
+            }
 
-            _animator.SetTrigger(pair.AnimationTrigger);
+            var nextPair = _animationTriggers.Find(p => p.State.Equals(currentState));
+            if (nextPair != null)
+                _animator.SetTrigger(nextPair.AnimationTrigger);
+
+            _lastState = currentState;
         }
 
         public void Dispose()
